@@ -10,10 +10,6 @@ variable "env" {
   type        = string
   description = "The environment name."
 }
-variable "subnet_id" {
-  type        = string
-  description = "The subnet id."
-}
 variable "instance_type" {
   type        = string
   description = "The instance type."

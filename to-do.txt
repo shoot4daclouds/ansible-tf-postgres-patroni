@@ -1,0 +1,4 @@
+variablize vpc configuration
+provisioner to call ansible
+test natgw tf template
+    - can pg nodes update from internet repos

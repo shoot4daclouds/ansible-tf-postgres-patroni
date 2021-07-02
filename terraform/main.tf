@@ -14,22 +14,11 @@ provider "aws" {
   region  = var.region
 }
 
-########
-# DATA #
-########
-data "aws_subnet" "postgres_subnet" {
-    id = var.subnet_id
-}
-
-data "aws_vpc" "main_vpc" {
-    id = data.aws_subnet.postgres_subnet.vpc_id
-}
-
 ##################
 # SECURITY GROUP #
 ##################
 resource "aws_security_group" "postgres-sg" {
-  vpc_id      = data.aws_vpc.main_vpc.id
+  vpc_id      = aws_vpc.main_vpc.id
   name = "postgres-sg"
   description = "Security group for PostgreSQL"
 
@@ -59,18 +48,18 @@ resource "aws_security_group" "postgres-sg" {
   }
 }
 
-############
-# INSTANCE #
-############
+################
+# DB INSTANCES #
+################
 resource "aws_instance" "postgres-ec2" {
 
   count         = var.instance_count
   ami                    = var.instance_ami
   instance_type          = var.instance_type
   key_name               = var.key_name
-  subnet_id              = data.aws_subnet.postgres_subnet.id
+  subnet_id              = aws_subnet.subnet-private-1.id
   vpc_security_group_ids = [aws_security_group.postgres-sg.id]
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   monitoring                  = true
 
   root_block_device {
@@ -90,9 +79,12 @@ resource "aws_instance" "postgres-ec2" {
     connection {
       type        = "ssh"
       agent       = false
-      host        = self.public_ip
+      host        = self.private_ip
       user        = "ec2-user"
       private_key = file(var.key_path)
+
+      bastion_host = aws_instance.bastion.public_ip
+      bastion_host_key = file(var.key_path)
     }
   }
 }
