@@ -10,6 +10,12 @@
     name: epel-release 
     state: present 
 
+- name: "Yum update"
+  yum:
+    name: '*'
+    state: latest
+  register: update
+
 - name: "Install postgresql packages"
   yum:
     name: "{{ pg_packages }}"
@@ -19,4 +25,7 @@
   yum:
     name: "{{ patroni_packages }}"
     state: present 
-    
+
+- name: "Reboot"
+  reboot: 
+  when: update.changed

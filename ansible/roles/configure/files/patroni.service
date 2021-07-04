@@ -11,7 +11,7 @@ Group=postgres
 WorkingDirectory=/var/lib/pgsql
 
 # Start the patroni process
-ExecStart=/bin/patroni /etc/patroni/patroni.yml
+ExecStart=/bin/patroni /etc/patroni/patroni.conf
 
 # Send HUP to reload from patroni.yml
 ExecReload=/bin/kill -s HUP $MAINPID

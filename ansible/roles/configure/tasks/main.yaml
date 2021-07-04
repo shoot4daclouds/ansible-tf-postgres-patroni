@@ -12,9 +12,10 @@
 
 - name: "Open firewall ports"
   firewalld:
-    port: "{{ firewall_ports }}/tcp"
+    port: "{{ item }}"
     state: enabled
     permanent: yes
+  loop: "{{ firewall_ports }}"
 
 - name: "Set selinux boolean"
   seboolean:
@@ -26,6 +27,14 @@
   template:
     src: etcd.conf.j2
     dest: /etc/etcd/etcd.conf
+  register: etcd_conf
+
+- name: "Restart etcd service on configuration change"
+  service:
+    name: etcd
+    state: restarted
+    enabled: yes
+  when: etcd_conf.changed
 
 - name: "Start and enable etcd service"
   service:
@@ -38,10 +47,15 @@
     path: /etc/patroni
     state: directory 
 
+- file:
+    path: /etc/patroni/etcd.conf
+    state: absent
+
 - name: "Template patroni configuration"
   template:
     src: patroni.conf.j2
-    dest: /etc/patroni/etcd.conf
+    dest: /etc/patroni/patroni.conf
+  register: patroni_conf
 
 - name: "Create patroni service file"
   copy:
@@ -52,7 +66,13 @@
 - name: "Systemd daemon-reload"
   systemd:
     daemon_reload: yes
-  when: daemon_reload.changed
+
+- name: "Start and enable patroni"
+  service:
+    name: patroni
+    state: restarted 
+    enabled: yes
+  when: patroni_conf.changed
 
 - name: "Start and enable patroni"
   service:

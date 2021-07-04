@@ -6,4 +6,5 @@ patroni_packages:
   - patroni-etcd 
   - etcd 
   - haproxy 
+  - libsemanage-python
   
