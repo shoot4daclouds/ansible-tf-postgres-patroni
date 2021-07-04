@@ -1,6 +1,6 @@
 scope: region_one
 namespace: /patroni_test/
-name: {{ ansible_host }}
+name: {{ ansible_hostname }}
 
 restapi:
  listen: {{ ansible_default_ipv4.address }}:8008
@@ -29,7 +29,7 @@ bootstrap:
 
 postgresql:
   listen: "*:6432"
-  connect_address: {{ ansible_host }}:6432
+  connect_address: {{ ansible_fqdn }}:6432
   data_dir: /var/lib/pgsql/data/postgresql
   bin_dir: /usr/pgsql-13/bin/
   pgpass: /tmp/pgpass0
