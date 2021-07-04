@@ -1,4 +1,14 @@
-variablize vpc configuration
 provisioner to call ansible
 test natgw tf template
     - can pg nodes update from internet repos
+ansible --> 
+    - terraform module - create network resources (rework terraform directory structure)
+        - how to output/register vpc_id, public_subnet_id and private_subnet_id (outputs.tf ?)
+    - terraform module - create natgw resources (separate directory creating natgw - costs money)
+    - install packages/update role - updates all packages and installs required packages to support postgresql patroni
+    - terraform destroy natgw resources 
+    - continue with configuration (patroni role)
+SSL etcd
+SSL patroni/postgresql
+pg_hba - access (dynamic)
+vault username/password
