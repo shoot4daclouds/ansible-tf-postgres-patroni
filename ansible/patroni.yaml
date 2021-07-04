@@ -1,0 +1,22 @@
+---
+
+# - name: "Terraform - Create base environment"
+
+# - name: "Terraform - Create NAT gateway resources"
+
+- name: "Install packages"
+  hosts: patroni 
+  gather_facts: true 
+  become: true 
+  roles:
+    - { role: install, tags: install }
+
+# - name: "Terraform - Destroy NAT gateway resources"
+
+- name: "Configure and start patroni"
+  hosts: patroni 
+  gather_facts: true 
+  become: true 
+  roles:
+    - { role: configure, tags: configure }
+    

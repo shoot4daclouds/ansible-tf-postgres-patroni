@@ -1,0 +1,46 @@
+scope: region_one
+namespace: /patroni_test/
+name: {{ ansible_host }}
+
+restapi:
+ listen: {{ ansible_default_ipv4.address }}:8008
+ connect_address: {{ ansible_default_ipv4.address }}:8008
+
+etcd:
+  hosts: {% for host in groups['patroni'] %}{{ hostvars[host]['ansible_default_ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}
+
+bootstrap:
+  dcs:
+    ttl: 10
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    postgresql:
+      use_pg_rewind: true
+      parameters:
+  initdb:
+  - encoding: UTF8
+  - data-checksums
+
+  pg_hba:
+  - host replication replicator 0.0.0.0/0 md5
+  - host all all 0.0.0.0/0 md5
+  users:
+
+postgresql:
+  listen: "*:6432"
+  connect_address: {{ ansible_host }}:6432
+  data_dir: /var/lib/pgsql/data/postgresql
+  bin_dir: /usr/pgsql-13/bin/
+  pgpass: /tmp/pgpass0
+  authentication:
+    replication:
+      username: replicator
+      password: replicator
+    superuser:
+      username: postgres
+      password: postgres
+    rewind:
+      username: rewind_user
+      password: rewind
+  parameters:

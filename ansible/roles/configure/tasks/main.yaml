@@ -1,0 +1,62 @@
+--- 
+
+- name: "Template hosts file"
+  template:
+    src: hosts.j2
+    dest: /etc/hosts 
+
+- name: "Ensure firewalld is running"
+  service:
+    name: firewalld 
+    state: started
+
+- name: "Open firewall ports"
+  firewalld:
+    port: "{{ firewall_ports }}/tcp"
+    state: enabled
+    permanent: yes
+
+- name: "Set selinux boolean"
+  seboolean:
+    name: haproxy_connect_any
+    persistent: yes 
+    state: yes
+
+- name: "Template etcd configuration"
+  template:
+    src: etcd.conf.j2
+    dest: /etc/etcd/etcd.conf
+
+- name: "Start and enable etcd service"
+  service:
+    name: etcd
+    state: started
+    enabled: yes
+
+- name: "Create patroni configuration directory"
+  file:
+    path: /etc/patroni
+    state: directory 
+
+- name: "Template patroni configuration"
+  template:
+    src: patroni.conf.j2
+    dest: /etc/patroni/etcd.conf
+
+- name: "Create patroni service file"
+  copy:
+    src: patroni.service
+    dest: /usr/lib/systemd/system/patroni.service
+  register: daemon_reload
+
+- name: "Systemd daemon-reload"
+  systemd:
+    daemon_reload: yes
+  when: daemon_reload.changed
+
+- name: "Start and enable patroni"
+  service:
+    name: patroni
+    state: started 
+    enabled: yes
+    

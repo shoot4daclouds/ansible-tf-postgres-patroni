@@ -1,0 +1,22 @@
+---
+
+- name: "Install Centos7 postgres repo rpm"
+  yum:
+    name: "{{ centos7_pg_repo_rpm }}"
+    state: present
+
+- name: "Install epel-release repo rpm"
+  yum: 
+    name: epel-release 
+    state: present 
+
+- name: "Install postgresql packages"
+  yum:
+    name: "{{ pg_packages }}"
+    state: present 
+
+- name: "Install patroni packages"
+  yum:
+    name: "{{ patroni_packages }}"
+    state: present 
+    

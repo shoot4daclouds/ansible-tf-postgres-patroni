@@ -1,0 +1,9 @@
+---
+
+patroni_packages:
+  - python36
+  - patroni 
+  - patroni-etcd 
+  - etcd 
+  - haproxy 
+  
