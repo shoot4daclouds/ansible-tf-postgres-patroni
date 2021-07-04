@@ -10,8 +10,8 @@ resource "aws_security_group" "bastion-sg" {
       from_port = 22
       to_port = 22
       protocol = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "SSH from laptop"
+      cidr_blocks = [var.bh_ssh_ingress_cidr_block]
+      description = "SSH ingress"
   }
   # The default egress rule
   egress {
@@ -23,7 +23,7 @@ resource "aws_security_group" "bastion-sg" {
   }
 
   tags = {
-    Name = "bastion-sg"
+    Name = var.bh_security_group_name
     Terraform   = "true"
     Environment = var.env
   }
@@ -34,15 +34,15 @@ resource "aws_security_group" "bastion-sg" {
 ####################
 resource "aws_instance" "bastion" {
 
-  ami                    = var.instance_ami
-  instance_type          = var.instance_type
-  key_name               = var.key_name
+  ami                    = var.bh_instance_ami
+  instance_type          = var.bh_instance_type
+  key_name               = var.bh_key
   subnet_id              = aws_subnet.subnet-public-1.id
   vpc_security_group_ids = [aws_security_group.bastion-sg.id]
   monitoring                  = true
   
   tags = {
-    Name        = "bastion-host"
+    Name        = var.bh_instance_name
     Terraform   = "true"
     Environment = var.env
   }

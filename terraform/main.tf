@@ -84,7 +84,7 @@ resource "aws_instance" "postgres-ec2" {
       private_key = file(var.key_path)
 
       bastion_host = aws_instance.bastion.public_ip
-      bastion_host_key = file(var.key_path)
+      bastion_host_key = file(var.bh_key_path)
     }
   }
 }
