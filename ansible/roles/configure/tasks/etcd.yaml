@@ -29,6 +29,33 @@
     dest: /etc/etcd/etcd.conf
   register: etcd_conf
 
+- name: "Create etcd SSL directory"
+  file:
+    path: /etc/etcd/ssl
+    state: directory
+
+- name: "Copy client2server SSL certificates"
+  copy:
+    path: /etc/etcd/ssl
+    src: "{{ item.file }}"
+    mode: "{{ item.mode }}"
+  when: etcd_ssl.enable_client2server_ssl.enable
+  loop:
+    - { file: "{{ etcd_ssl.enable_client2server_ssl.trusted_ca_file }}", mode: '0644' }
+    - { file: "{{ etcd_ssl.enable_client2server_ssl.cert_file }}", mode: '0644' }
+    - { file: "{{ etcd_ssl.enable_client2server_ssl.key_file }}", mode: '0600' }
+
+- name: "Copy peer2peer SSL certificates"
+  copy:
+    path: /etc/etcd/ssl
+    src: "{{ item.file }}"
+    mode: "{{ item.mode }}"
+  when: etcd_ssl.enable_peer2peer_ssl.enable
+  loop:
+    - { file: "{{ etcd_ssl.enable_peer2peer_ssl.peer_trusted_ca_file }}", mode: '0644' }
+    - { file: "{{ etcd_ssl.enable_peer2peer_ssl.peer_cert_file }}", mode: '0644' }
+    - { file: "{{ etcd_ssl.enable_peer2peer_ssl.peer_key_file }}", mode: '0600' }
+
 - name: "Restart etcd service on configuration change"
   service:
     name: etcd

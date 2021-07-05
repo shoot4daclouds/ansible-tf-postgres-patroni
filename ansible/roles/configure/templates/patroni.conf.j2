@@ -3,11 +3,11 @@ namespace: /patroni_test/
 name: {{ ansible_hostname }}
 
 restapi:
- listen: {{ ansible_default_ipv4.address }}:8008
- connect_address: {{ ansible_default_ipv4.address }}:8008
+ listen: {{ ansible_enp0s8.ipv4.address }}:8008
+ connect_address: {{ ansible_enp0s8.ipv4.address }}:8008
 
 etcd:
-  hosts: {% for host in groups['patroni'] %}{{ hostvars[host]['ansible_default_ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}
+  hosts: {% for host in groups['patroni'] %}{{ hostvars[host]['ansible_enp0s8']['ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}
 
 bootstrap:
   dcs:

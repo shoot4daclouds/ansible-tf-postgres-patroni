@@ -1,7 +1,25 @@
 --- 
 
+#########################
+# Postgresql versioning #
+#########################
 centos7_pg_repo_rpm: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 pg_packages:
   - postgresql13-server 
   - postgresql13 
   - postgresql13-contrib
+
+##########################
+# etcd SSL configuration #
+##########################
+etcd_ssl:
+  enable_client2server_ssl: 
+    enable: true      ## if true, define following vars - files must be in roles/etcd/files directory
+    cert_file: default
+    key_file: default
+    trusted_ca_file: default
+  enable_peer2peer_ssl:
+    enable: true      ## if true, define following vars - files must be in roles/etcd/files directory
+    peer_cert_file: default
+    peer_key_file: default
+    peer_trusted_ca_file: default

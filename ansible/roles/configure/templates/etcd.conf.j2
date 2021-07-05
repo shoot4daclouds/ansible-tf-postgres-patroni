@@ -1,6 +1,22 @@
-ETCD_LISTEN_PEER_URLS="http://{{ ansible_default_ipv4.address }}:2380"
-ETCD_LISTEN_CLIENT_URLS="http://{{ ansible_default_ipv4.address }}:2379,http://127.0.0.1:2379"
+ETCD_LISTEN_PEER_URLS="http://{{ ansible_enp0s8.ipv4.address }}:2380"
+ETCD_LISTEN_CLIENT_URLS="http://{{ ansible_enp0s8.ipv4.address }}:2379,http://127.0.0.1:2379"
 ETCD_NAME="{{ ansible_hostname }}"
-ETCD_INITIAL_ADVERTISE_PEER_URLS="http://{{ ansible_default_ipv4.address }}:2380"
-ETCD_ADVERTISE_CLIENT_URLS="http://{{ ansible_default_ipv4.address }}:2379"
-ETCD_INITIAL_CLUSTER="{% for host in groups['patroni'] %}{{ hostvars[host]['ansible_hostname'] }}=http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:2380{% if not loop.last %},{% endif %}{% endfor %}"
+ETCD_INITIAL_ADVERTISE_PEER_URLS="http://{{ ansible_enp0s8.ipv4.address }}:2380"
+ETCD_ADVERTISE_CLIENT_URLS="http://{{ ansible_enp0s8.ipv4.address }}:2379"
+ETCD_INITIAL_CLUSTER="{% for host in groups['patroni'] %}{{ hostvars[host]['ansible_hostname'] }}=http://{{ hostvars[host]['ansible_enp0s8']['ipv4']['address'] }}:2380{% if not loop.last %},{% endif %}{% endfor %}"
+
+# {% if etcd_ssl.enable_client2server_ssl.enable %}
+# # Client to etcd cluster SSL configuration
+# ETCD_TRUSTED_CA_FILE=/etc/etcd/ssl/{{ etcd_ssl.enable_client2server_ssl.trusted_ca_file }}
+# ETCD_CLIENT_CERT_AUTH=true
+# ETCD_CERT_FILE=/etc/etcd/ssl/{{ etcd_ssl.enable_client2server_ssl.cert_file }}
+# ETCD_KEY_FILE=/etc/etcd/ssl/{{ etcd_ssl.enable_client2server_ssl.key_file }}
+# {% endif %}
+
+# {% if etcd_ssl.enable_peer2peer_ssl.enable %}
+# # Peer to peer SSL configuration
+# ETCD_PEER_TRUSTED_CA_FILE=/etc/etcd/ssl/{{ etcd_ssl.enable_peer2peer_ssl.peer_trusted_ca_file }}
+# ETCD_PEER_CLIENT_CERT_AUTH=true
+# ETCD_PEER_CERT_FILE=/etc/etcd/ssl/{{ etcd_ssl.enable_peer2peer_ssl.peer_cert_file }}
+# ETCD_PEER_KEY_FILE=/etc/etcd/ssl/{{ etcd_ssl.enable_peer2peer_ssl.peer_key_file }}
+# {% endif %}

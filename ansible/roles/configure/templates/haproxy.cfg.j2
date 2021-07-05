@@ -22,5 +22,5 @@ listen region_one
 	http-check expect status 200
 	default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
 {% for host in groups['patroni'] %}
-    	server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:6432 maxconn 80 check port 8008
+    	server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_enp0s8']['ipv4']['address'] }}:6432 maxconn 80 check port 8008
 {% endfor %}
