@@ -26,6 +26,11 @@
     name: "{{ patroni_packages }}"
     state: present 
 
+- name: "Install haproxy packages"
+  yum:
+    name: haproxy
+    state: present 
+
 - name: "Reboot"
   reboot: 
   when: update.changed

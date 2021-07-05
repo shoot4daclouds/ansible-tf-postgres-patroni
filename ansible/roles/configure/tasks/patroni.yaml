@@ -1,0 +1,52 @@
+--- 
+
+- name: "Create patroni configuration directory"
+  file:
+    path: /etc/patroni
+    state: directory 
+
+- file:
+    path: /etc/patroni/etcd.conf
+    state: absent
+
+- name: "Template patroni configuration"
+  template:
+    src: patroni.conf.j2
+    dest: /etc/patroni/patroni.conf
+  register: patroni_conf
+
+- name: "Ensure firewalld is running"
+  service:
+    name: firewalld 
+    state: started
+
+- name: "Open patroni firewall ports"
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+  loop: "{{ patroni_ports }}"
+
+- name: "Create patroni service file"
+  copy:
+    src: patroni.service
+    dest: /usr/lib/systemd/system/patroni.service
+  register: daemon_reload
+
+- name: "Systemd daemon-reload"
+  systemd:
+    daemon_reload: yes
+
+- name: "Start and enable patroni"
+  service:
+    name: patroni
+    state: restarted 
+    enabled: yes
+  when: patroni_conf.changed
+
+- name: "Start and enable patroni"
+  service:
+    name: patroni
+    state: started 
+    enabled: yes
+    

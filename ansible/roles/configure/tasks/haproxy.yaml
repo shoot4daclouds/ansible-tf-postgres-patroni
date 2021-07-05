@@ -1,0 +1,32 @@
+--- 
+
+- name: "Template haproxy configuration"
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  register: haproxy_conf
+
+- name: "Ensure firewalld is running"
+  service:
+    name: firewalld 
+    state: started
+
+- name: "Open haproxy firewall ports"
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: yes
+  loop: "{{ haproxy_ports }}"
+
+- name: "Start and enable haproxy"
+  service:
+    name: haproxy
+    state: restarted 
+    enabled: yes
+  when: haproxy_conf.changed
+
+- name: "Start and enable haproxy"
+  service:
+    name: haproxy
+    state: started 
+    enabled: yes

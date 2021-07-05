@@ -1,10 +1,13 @@
 --- 
 
-firewall_ports:
-  - "5432/tcp"
-  - "6432/tcp"
+etcd_ports:
   - "2380/tcp"
   - "2379/tcp"
-  - "8008/tcp"
+
+patroni_ports:
+  - "6432/tcp"
   - "7000/tcp"
-  
+  - "8008/tcp"
+
+haproxy_ports:
+  - "5432/tcp"
